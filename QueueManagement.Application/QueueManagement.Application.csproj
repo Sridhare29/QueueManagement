@@ -7,10 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Interfaces\" />
-    <Folder Include="Mappings\" />
-    <Folder Include="Validators\" />
-    <Folder Include="Services\" />
+    <Compile Remove="Services\**" />
+    <Compile Remove="Validators\**" />
+    <EmbeddedResource Remove="Services\**" />
+    <EmbeddedResource Remove="Validators\**" />
+    <None Remove="Services\**" />
+    <None Remove="Validators\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\QueueManagement.Domain\QueueManagement.Domain.csproj" />
   </ItemGroup>
 
 </Project>
