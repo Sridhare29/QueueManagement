@@ -1,21 +1,13 @@
-﻿using QueueManagement.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using QueueManagement.Application.DTOs;
 
 namespace QueueManagement.Application.Interfaces
 {
     public interface IQueueService
     {
-        Task<QueueToken> GenerateToken(int userId);
-
-        Task<QueueToken?> CallNext(int counterId);
-
-        Task CompleteToken(int tokenId);
-
-        Task<List<QueueToken>> GetWaitingQueue();
-
+        Task<QueueTokenDto> GenerateToken(int userId);
+        Task<QueueTokenDto?> CallNext(int counterId);
+        Task<QueueTokenDto> CompleteToken(int tokenId);
+        Task<List<QueueTokenDto>> GetWaitingQueue();
+        Task<QueueTokenDto> GetTokenStatus(int tokenId);
     }
 }

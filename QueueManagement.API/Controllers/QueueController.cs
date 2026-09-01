@@ -1,44 +1,100 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using QueueManagement.Application.DTOs;
 using QueueManagement.Application.Interfaces;
 
-[ApiController]
-[Route("api/[controller]")]
-public class QueueController : ControllerBase
+namespace QueueManagement.API.Controllers
 {
-    private readonly IQueueService _service;
-
-    public QueueController(IQueueService service)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class QueueController : ControllerBase
     {
-        _service = service;
-    }
+        private readonly IQueueService _service;
 
-    [HttpPost("generate/{userId}")]
-    public async Task<IActionResult> Generate(int userId)
-    {
-        var result = await _service.GenerateToken(userId);
+        public QueueController(IQueueService service)
+        {
+            _service = service;
+        }
 
-        return Ok(result);
-    }
+        // POST api/queue/generate
+        [HttpPost("generate")]
+        public async Task<IActionResult> Generate([FromBody] GenerateTokenRequest request)
+        {
+            try
+            {
+                var result = await _service.GenerateToken(request.UserId);
+                return CreatedAtAction(nameof(GetStatus), new { tokenId = result.Id }, result);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new ErrorResponse(ex.Message));
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new ErrorResponse(ex.Message));
+            }
+        }
 
-    [HttpPost("call-next/{counterId}")]
-    public async Task<IActionResult> CallNext(int counterId)
-    {
-        var result = await _service.CallNext(counterId);
+        // POST api/queue/call-next/{counterId}
+        [HttpPost("call-next/{counterId:int}")]
+        public async Task<IActionResult> CallNext(int counterId)
+        {
+            try
+            {
+                var result = await _service.CallNext(counterId);
+                if (result == null)
+                    return NoContent(); // no one waiting
 
-        return Ok(result);
-    }
+                return Ok(result);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new ErrorResponse(ex.Message));
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new ErrorResponse(ex.Message));
+            }
+        }
 
-    [HttpPut("complete/{tokenId}")]
-    public async Task<IActionResult> Complete(int tokenId)
-    {
-        await _service.CompleteToken(tokenId);
+        // PUT api/queue/complete/{tokenId}
+        [HttpPut("complete/{tokenId:int}")]
+        public async Task<IActionResult> Complete(int tokenId)
+        {
+            try
+            {
+                var result = await _service.CompleteToken(tokenId);
+                return Ok(result);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new ErrorResponse(ex.Message));
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new ErrorResponse(ex.Message));
+            }
+        }
 
-        return Ok();
-    }
+        // GET api/queue/waiting
+        [HttpGet("waiting")]
+        public async Task<IActionResult> Waiting()
+        {
+            return Ok(await _service.GetWaitingQueue());
+        }
 
-    [HttpGet("waiting")]
-    public async Task<IActionResult> Waiting()
-    {
-        return Ok(await _service.GetWaitingQueue());
+        // GET api/queue/status/{tokenId}
+        [HttpGet("status/{tokenId:int}")]
+        public async Task<IActionResult> GetStatus(int tokenId)
+        {
+            try
+            {
+                var result = await _service.GetTokenStatus(tokenId);
+                return Ok(result);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new ErrorResponse(ex.Message));
+            }
+        }
     }
 }

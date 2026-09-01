@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using QueueManagement.API.Data;
 using QueueManagement.Application.Interfaces;
+using QueueManagement.Application.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
