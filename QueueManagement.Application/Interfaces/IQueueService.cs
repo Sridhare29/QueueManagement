@@ -6,8 +6,8 @@ namespace QueueManagement.Application.Interfaces
     {
         Task<QueueTokenDto> GenerateToken(GenerateTokenRequest request);
         Task<QueueTokenDto?> CallNext(string tokenNo, int counterId);
-        Task<QueueTokenDto> CompleteToken(int tokenId);
+        Task<QueueTokenDto> CompleteToken(string tokenNo);
         Task<List<QueueTokenDto>> GetWaitingQueue();
-        Task<QueueTokenDto> GetTokenStatus(int tokenId);
+        Task<QueueTokenDto> GetTokenStatus(string tokenNo);
     }
 }

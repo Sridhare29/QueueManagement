@@ -22,7 +22,7 @@ namespace QueueManagement.API.Controllers
             try
             {
                 var result = await _service.GenerateToken(request);
-                return CreatedAtAction(nameof(GetStatus), new { tokenId = result.Id }, result);
+                return CreatedAtAction(nameof(GetStatus), new { tokenNo = result.TokenNo }, result);
             }
             catch (KeyNotFoundException ex)
             {
@@ -53,13 +53,13 @@ namespace QueueManagement.API.Controllers
             }
         }
 
-        // PUT api/queue/complete/{tokenId}
-        [HttpPut("complete/{tokenId:int}")]
-        public async Task<IActionResult> Complete(int tokenId)
+        // PUT api/queue/complete/{tokenNo}
+        [HttpPut("complete/{tokenNo}")]
+        public async Task<IActionResult> Complete(string tokenNo)
         {
             try
             {
-                var result = await _service.CompleteToken(tokenId);
+            var result = await _service.CompleteToken(tokenNo);
                 return Ok(result);
             }
             catch (KeyNotFoundException ex)
@@ -79,13 +79,13 @@ namespace QueueManagement.API.Controllers
             return Ok(await _service.GetWaitingQueue());
         }
 
-        // GET api/queue/status/{tokenId}
-        [HttpGet("status/{tokenId:int}")]
-        public async Task<IActionResult> GetStatus(int tokenId)
+        // GET api/queue/status/{tokenNo}
+        [HttpGet("status/{tokenNo}")]
+        public async Task<IActionResult> GetStatus(string tokenNo)
         {
             try
             {
-                var result = await _service.GetTokenStatus(tokenId);
+            var result = await _service.GetTokenStatus(tokenNo);
                 return Ok(result);
             }
             catch (KeyNotFoundException ex)

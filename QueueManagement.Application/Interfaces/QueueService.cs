@@ -102,11 +102,12 @@ namespace QueueManagement.Application.Services
             }
         }
 
-        public async Task<QueueTokenDto> CompleteToken(int tokenId)
+        public async Task<QueueTokenDto> CompleteToken(string tokenNo)
         {
-            var token = await _context.QueueTokens.FindAsync(tokenId);
+            var token = await _context.QueueTokens
+                .FirstOrDefaultAsync(x => x.TokenNo == tokenNo);
             if (token == null)
-                throw new KeyNotFoundException($"Token with Id {tokenId} was not found.");
+                throw new KeyNotFoundException($"Token '{tokenNo}' was not found.");
 
             if (token.Status != QueueStatus.Serving)
                 throw new InvalidOperationException(
@@ -135,15 +136,15 @@ namespace QueueManagement.Application.Services
             return result;
         }
 
-        public async Task<QueueTokenDto> GetTokenStatus(int tokenId)
+        public async Task<QueueTokenDto> GetTokenStatus(string tokenNo)
         {
             var token = await _context.QueueTokens
                 .Include(x => x.User)
                 .Include(x => x.Counter)
-                .FirstOrDefaultAsync(x => x.Id == tokenId);
+                .FirstOrDefaultAsync(x => x.TokenNo == tokenNo);
 
             if (token == null)
-                throw new KeyNotFoundException($"Token with Id {tokenId} was not found.");
+                throw new KeyNotFoundException($"Token '{tokenNo}' was not found.");
 
             int? position = null;
             if (token.Status == QueueStatus.Waiting)
