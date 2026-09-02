@@ -14,5 +14,7 @@
 
     public record GenerateTokenRequest(string Name, string MobileNo);
 
+    public record CallNextRequest(int CounterId);
+
     public record ErrorResponse(string Message);
 }

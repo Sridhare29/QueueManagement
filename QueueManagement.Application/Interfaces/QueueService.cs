@@ -63,7 +63,7 @@ namespace QueueManagement.Application.Services
             throw new InvalidOperationException("Could not generate a unique token number, please retry.");
         }
 
-        public async Task<QueueTokenDto?> CallNext(int counterId)
+        public async Task<QueueTokenDto?> CallNext(string tokenNo, int counterId)
         {
             var counter = await _context.Counters.FirstOrDefaultAsync(x => x.Id == counterId);
             if (counter == null)
@@ -80,15 +80,11 @@ namespace QueueManagement.Application.Services
             try
             {
                 var token = await _context.QueueTokens
-                    .Where(x => x.Status == QueueStatus.Waiting)
-                    .OrderBy(x => x.CreatedDate)
+                    .Where(x => x.TokenNo == tokenNo && x.Status == QueueStatus.Waiting)
                     .FirstOrDefaultAsync();
 
                 if (token == null)
-                {
-                    await tx.CommitAsync();
-                    return null;
-                }
+                    throw new KeyNotFoundException($"Waiting token '{tokenNo}' was not found.");
 
                 token.Status = QueueStatus.Serving;
                 token.CounterId = counterId;

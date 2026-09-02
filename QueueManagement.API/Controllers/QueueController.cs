@@ -34,16 +34,13 @@ namespace QueueManagement.API.Controllers
             }
         }
 
-        // POST api/queue/call-next/{counterId}
-        [HttpPost("call-next/{counterId:int}")]
-        public async Task<IActionResult> CallNext(int counterId)
+        // POST api/queue/call-next/{tokenNo}
+        [HttpPost("call-next/{tokenNo}")]
+        public async Task<IActionResult> CallNext(string tokenNo, [FromBody] CallNextRequest request)
         {
             try
             {
-                var result = await _service.CallNext(counterId);
-                if (result == null)
-                    return NoContent(); // no one waiting
-
+                var result = await _service.CallNext(tokenNo, request.CounterId);
                 return Ok(result);
             }
             catch (KeyNotFoundException ex)
