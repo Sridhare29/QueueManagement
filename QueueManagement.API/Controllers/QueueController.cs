@@ -21,7 +21,7 @@ namespace QueueManagement.API.Controllers
         {
             try
             {
-                var result = await _service.GenerateToken(request.UserId);
+                var result = await _service.GenerateToken(request);
                 return CreatedAtAction(nameof(GetStatus), new { tokenId = result.Id }, result);
             }
             catch (KeyNotFoundException ex)

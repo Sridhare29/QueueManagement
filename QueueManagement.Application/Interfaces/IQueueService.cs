@@ -4,7 +4,7 @@ namespace QueueManagement.Application.Interfaces
 {
     public interface IQueueService
     {
-        Task<QueueTokenDto> GenerateToken(int userId);
+        Task<QueueTokenDto> GenerateToken(GenerateTokenRequest request);
         Task<QueueTokenDto?> CallNext(int counterId);
         Task<QueueTokenDto> CompleteToken(int tokenId);
         Task<List<QueueTokenDto>> GetWaitingQueue();

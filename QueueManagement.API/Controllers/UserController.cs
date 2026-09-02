@@ -17,22 +17,6 @@ public class UserController : ControllerBase
         _context = context;
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Create(CreateUserDto dto)
-    {
-        var user = new User
-        {
-            Name = dto.Name,
-            MobileNo = dto.MobileNo
-        };
-
-        _context.Users.Add(user);
-
-        await _context.SaveChangesAsync();
-
-        return Ok(user);
-    }
-
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {

@@ -12,7 +12,7 @@
         DateTime? CompletedTime,
         int? PositionInQueue);
 
-    public record GenerateTokenRequest(int UserId);
+    public record GenerateTokenRequest(string Name, string MobileNo);
 
     public record ErrorResponse(string Message);
 }

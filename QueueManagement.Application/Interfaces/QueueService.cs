@@ -16,11 +16,15 @@ namespace QueueManagement.Application.Services
             _context = context;
         }
 
-        public async Task<QueueTokenDto> GenerateToken(int userId)
+        public async Task<QueueTokenDto> GenerateToken(GenerateTokenRequest request)
         {
-            var userExists = await _context.Users.AnyAsync(u => u.Id == userId);
-            if (!userExists)
-                throw new KeyNotFoundException($"User with Id {userId} was not found.");
+            var user = new User
+            {
+                Name = request.Name,
+                MobileNo = request.MobileNo
+            };
+
+            _context.Users.Add(user);
 
             const int maxAttempts = 5;
             for (int attempt = 1; attempt <= maxAttempts; attempt++)
@@ -36,7 +40,7 @@ namespace QueueManagement.Application.Services
 
                 var token = new QueueToken
                 {
-                    UserId = userId,
+                    User = user,
                     TokenNo = $"A{nextTokenNumber:000}",
                     CreatedDate = DateTime.Now,
                     Status = QueueStatus.Waiting
