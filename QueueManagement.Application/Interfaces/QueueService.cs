@@ -25,13 +25,19 @@ namespace QueueManagement.Application.Services
             const int maxAttempts = 5;
             for (int attempt = 1; attempt <= maxAttempts; attempt++)
             {
-                var todayCount = await _context.QueueTokens
-                    .CountAsync(x => x.CreatedDate.Date == DateTime.Today);
+                var tokenNumbers = await _context.QueueTokens
+                    .Select(x => x.TokenNo)
+                    .ToListAsync();
+
+                var nextTokenNumber = tokenNumbers
+                    .Select(tokenNo => int.TryParse(tokenNo.TrimStart('A'), out var number) ? number : 0)
+                    .DefaultIfEmpty()
+                    .Max() + 1;
 
                 var token = new QueueToken
                 {
                     UserId = userId,
-                    TokenNo = $"A{(todayCount + 1):000}",
+                    TokenNo = $"A{nextTokenNumber:000}",
                     CreatedDate = DateTime.Now,
                     Status = QueueStatus.Waiting
                 };
