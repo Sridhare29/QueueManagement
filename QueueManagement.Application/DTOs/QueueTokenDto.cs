@@ -12,7 +12,11 @@
         DateTime? CompletedTime,
         int? PositionInQueue);
 
-    public record GenerateTokenRequest(string Name, string MobileNo);
+    public class GenerateTokenRequest
+    {
+        public string Name { get; set; } = string.Empty;
+        public string MobileNo { get; set; } = string.Empty;
+    }
 
     public record CallNextRequest(int CounterId);
 
