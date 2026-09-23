@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using QueueManagement.Application.DTOs;
 using QueueManagement.Application.Interfaces;
 
@@ -6,6 +7,7 @@ namespace QueueManagement.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class QueueController : ControllerBase
     {
         private readonly IQueueService _service;
@@ -36,6 +38,7 @@ namespace QueueManagement.API.Controllers
 
         // POST api/queue/call-next/{tokenNo}
         [HttpPost("call-next/{tokenNo}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CallNext(string tokenNo, [FromBody] CallNextRequest request)
         {
             try
@@ -55,6 +58,7 @@ namespace QueueManagement.API.Controllers
 
         // PUT api/queue/complete/{tokenNo}
         [HttpPut("complete/{tokenNo}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Complete(string tokenNo)
         {
             try
@@ -74,6 +78,7 @@ namespace QueueManagement.API.Controllers
 
         // GET api/queue/waiting
         [HttpGet("waiting")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Waiting()
         {
             return Ok(await _service.GetWaitingQueue());

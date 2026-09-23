@@ -21,7 +21,7 @@ namespace QueueManagement.Services.service
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.NameIdentifier, user.Name),
+                new Claim(ClaimTypes.Name, user.Name),
                 new Claim(ClaimTypes.MobilePhone, user.MobileNo),
                 new Claim(ClaimTypes.Role, user.Role)
             };
