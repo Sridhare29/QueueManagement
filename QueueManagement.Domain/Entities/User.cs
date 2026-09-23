@@ -14,7 +14,10 @@ namespace QueueManagement.Domain.Entities
 
         public string MobileNo { get; set; } = "";
 
-        public ICollection<QueueToken> QueueTokens { get; set; }
+        public string PasswordHash { get; set; } = "";
 
+        public string Role { get; set; } = "User";
+
+        public ICollection<QueueToken> QueueTokens { get; set; } = new List<QueueToken>();
     }
 }
