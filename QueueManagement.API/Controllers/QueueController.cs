@@ -78,7 +78,6 @@ namespace QueueManagement.API.Controllers
 
         // GET api/queue/waiting
         [HttpGet("waiting")]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Waiting()
         {
             return Ok(await _service.GetWaitingQueue());
