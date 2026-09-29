@@ -18,6 +18,11 @@
         public string MobileNo { get; set; } = string.Empty;
     }
 
+    public record CreateQueueRequest(string Name);
+    public record JoinQueueRequest(string AccessCode);
+    public record CreatedQueueDto(int Id, string Name, string AccessCode);
+    public record QueueSummaryDto(int Id, string Name, bool IsOwner, string? AccessCode);
+
     public record CallNextRequest(int CounterId);
 
     public record ErrorResponse(string Message);

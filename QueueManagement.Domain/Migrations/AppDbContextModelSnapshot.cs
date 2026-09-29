@@ -22,6 +22,55 @@ namespace QueueManagement.Domain.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("QueueManagement.Domain.Entities.Queue", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AccessCode")
+                        .IsRequired()
+                        .HasMaxLength(6)
+                        .HasColumnType("nvarchar(6)");
+
+                    b.Property<int?>("AdminUserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccessCode")
+                        .IsUnique();
+
+                    b.HasIndex("AdminUserId");
+
+                    b.ToTable("Queues");
+                });
+
+            modelBuilder.Entity("QueueManagement.Domain.Entities.QueueMembership", b =>
+                {
+                    b.Property<int>("QueueId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("JoinedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("QueueId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("QueueMemberships");
+                });
+
             modelBuilder.Entity("QueueManagement.Domain.Entities.Counter", b =>
                 {
                     b.Property<int>("Id")
@@ -62,6 +111,9 @@ namespace QueueManagement.Domain.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("QueueId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -76,7 +128,7 @@ namespace QueueManagement.Domain.Migrations
 
                     b.HasIndex("CounterId");
 
-                    b.HasIndex("TokenNo")
+                    b.HasIndex("QueueId", "TokenNo")
                         .IsUnique();
 
                     b.HasIndex("UserId");
@@ -116,6 +168,12 @@ namespace QueueManagement.Domain.Migrations
 
             modelBuilder.Entity("QueueManagement.Domain.Entities.QueueToken", b =>
                 {
+                    b.HasOne("QueueManagement.Domain.Entities.Queue", "Queue")
+                        .WithMany("Tokens")
+                        .HasForeignKey("QueueId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("QueueManagement.Domain.Entities.Counter", "Counter")
                         .WithMany("QueueTokens")
                         .HasForeignKey("CounterId");
@@ -128,7 +186,45 @@ namespace QueueManagement.Domain.Migrations
 
                     b.Navigation("Counter");
 
+                    b.Navigation("Queue");
+
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("QueueManagement.Domain.Entities.Queue", b =>
+                {
+                    b.HasOne("QueueManagement.Domain.Entities.User", "AdminUser")
+                        .WithMany()
+                        .HasForeignKey("AdminUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("AdminUser");
+                });
+
+            modelBuilder.Entity("QueueManagement.Domain.Entities.QueueMembership", b =>
+                {
+                    b.HasOne("QueueManagement.Domain.Entities.Queue", "Queue")
+                        .WithMany("Members")
+                        .HasForeignKey("QueueId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("QueueManagement.Domain.Entities.User", "User")
+                        .WithMany("QueueMemberships")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Queue");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("QueueManagement.Domain.Entities.Queue", b =>
+                {
+                    b.Navigation("Members");
+
+                    b.Navigation("Tokens");
                 });
 
             modelBuilder.Entity("QueueManagement.Domain.Entities.Counter", b =>
@@ -139,6 +235,8 @@ namespace QueueManagement.Domain.Migrations
             modelBuilder.Entity("QueueManagement.Domain.Entities.User", b =>
                 {
                     b.Navigation("QueueTokens");
+
+                    b.Navigation("QueueMemberships");
                 });
 #pragma warning restore 612, 618
         }

@@ -11,6 +11,9 @@ namespace QueueManagement.Domain.Entities
     {
         public int Id { get; set; }
 
+        public int QueueId { get; set; }
+        public Queue Queue { get; set; } = null!;
+
         public string TokenNo { get; set; } = "";
 
         public DateTime CreatedDate { get; set; }

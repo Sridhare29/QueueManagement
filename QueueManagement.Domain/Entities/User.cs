@@ -19,5 +19,6 @@ namespace QueueManagement.Domain.Entities
         public string Role { get; set; } = "User";
 
         public ICollection<QueueToken> QueueTokens { get; set; } = new List<QueueToken>();
+        public ICollection<QueueMembership> QueueMemberships { get; set; } = new List<QueueMembership>();
     }
 }
